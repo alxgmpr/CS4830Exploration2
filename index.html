@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Exploration 2</title>
+        <meta charset="utf-8">
+        <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase-firestore.js"></script>
+        
+    </head>
+    <body>
+        <p>Hello world! Try signing into my visitor book here by printing your first and last name.</p>
+        <p>This data can be added retreived in real time thanks to Firebase Firestore :)</p>
+        <input type="text" id="fname" placeholder="first name">
+        <input type="text" id="lname" placeholder="last name">
+        
+        <button onclick="addtodb()">Add to DB</button>
+        <button onclick="printfromdb()">Print from DB</button>
+        
+        <div id="content">
+            
+        </div>
+        <script>
+            // Initialize Firebase
+            var config = {
+                apiKey: "AIzaSyBZ1eMlCbobJpx-PBVqPMMksfaFx2jSwAY",
+                authDomain: "exploration2-ba8e7.firebaseapp.com",
+                databaseURL: "https://exploration2-ba8e7.firebaseio.com",
+                projectId: "exploration2-ba8e7",
+                storageBucket: "exploration2-ba8e7.appspot.com",
+                messagingSenderId: "88711016743"
+            };
+            firebase.initializeApp(config);
+            
+            // SETUP DB
+            var db = firebase.firestore();
+            db.settings({
+                timestampsInSnapshots: true
+            });
+            
+            
+            function addtodb() {
+                console.log('Adding to db');
+                var first_name = document.getElementById('fname').value;
+                var last_name = document.getElementById('lname').value;
+                console.log(first_name);
+                console.log(last_name);
+                db.collection("users").add({
+                   first: first_name,
+                   last: last_name,
+                   born: 0
+                })
+                .then(function(docRef) {
+                      console.log("Document written with ID: ", docRef.id);
+                })
+                .catch(function(error) {
+                       console.error("Error adding document: ", error);
+                });
+            };
+        
+            function printfromdb() {
+                console.log('Printing user db data');
+                document.getElementById('content').innerText = '';
+                db.collection("users").get().then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                        console.log("Document data:", doc.data());
+                                        // Write to the content div
+                        document.getElementById('content').innerText += JSON.stringify(doc.data()) + '\n';
+                    });
+                });
+            };
+            
+        </script>
+    </body>
+    
+</html>
